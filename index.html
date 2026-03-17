@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InPost – Home Screen</title>
+
+  <!--
+    Fonts:
+    - Archivo  → Aura DS "font-family/primary"
+    - Saira    → Prototype fallback for InPost Display ("--font-family-secondary")
+      Per Aura DS pattern "Prototype Font Fallback: Saira for InPost Display"
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────
+       Aura Design System — CSS Custom Properties
+       Sources: Neo4j (InPost - Color Primitives,
+       component tokens) + Figma design context
+    ───────────────────────────────────────────── */
+    :root {
+      /* ── Color Primitives – InPost brand ── */
+      --inpost-grey-0:        #FEFEFE;
+      --inpost-grey-100:      #F4F4F4;
+      --inpost-grey-200:      #E1E1E1;
+      --inpost-grey-400:      #8E8E8E;
+      --inpost-grey-400-a15:  rgba(142, 142, 142, 0.15);
+      --inpost-grey-900:      #1D1D1D;
+
+      --inpost-yellow-600:    #FFCC05;
+      --inpost-yellow-800:    #EFB503;
+
+      /* ── Typography ── */
+      --font-family-primary:   'Archivo', sans-serif;
+      --font-family-secondary: 'Saira', sans-serif; /* InPost Display fallback */
+
+      /* Font sizes (rem-scaled from base 16px) */
+      --font-size-0_75:  12px;
+      --font-size-0_875: 14px;
+      --font-size-1:     16px;
+      --font-size-1_25:  20px;
+      --font-size-1_5:   24px;
+
+      /* Font weights */
+      --font-weight-medium:    500;
+      --font-weight-semi-bold: 600;
+      --font-weight-bold:      700;
+      --font-weight-black:     900;
+
+      /* ── Spacing ── */
+      --spacing-0:   0px;
+      --spacing-4:   4px;
+      --spacing-8:   8px;
+      --spacing-12:  12px;
+      --spacing-16:  16px;
+      --spacing-20:  20px;
+
+      /* ── Radius ── */
+      --radius-md:   4px;
+
+      /* ── General ── */
+      --general-background: var(--inpost-grey-100);
+
+      /* ── Home Card component tokens ── */
+      --home-card-role-neutral-bg:        var(--inpost-grey-0);
+      --home-card-role-neutral-label:     var(--inpost-grey-900);
+      --home-card-size-medium-padding-h:  var(--spacing-16);
+      --home-card-size-medium-padding-v:  var(--spacing-12);
+      --home-card-size-medium-gap:        var(--spacing-12);
+      --home-card-size-medium-radius:     8px;
+
+      /* ── Bar Top component tokens ── */
+      --bar-top-role-neutral-bg:       rgba(255, 255, 255, 0);
+      --bar-top-role-neutral-border:   rgba(255, 255, 255, 0);
+      --bar-top-role-neutral-label:    var(--inpost-grey-900);
+      --bar-top-role-neutral-native:   var(--inpost-grey-900);
+      --bar-top-size-medium-gap:       var(--spacing-4);
+      --bar-top-size-medium-padding-h: var(--spacing-20);
+      --bar-top-size-medium-padding-v: var(--spacing-8);
+
+      /* ── Bar Top Button component tokens ── */
+      --bar-top-button-role-neutral-bg: var(--inpost-grey-0);
+      --bar-top-button-size-medium-radius: 8px;
+
+      /* ── Bar Top Incoins ── */
+      --on-primary: var(--inpost-grey-900);
+
+      /* ── Bar Bottom component tokens ── */
+      --bar-bottom-role-neutral-bg:     rgba(254, 254, 254, 0.65);
+      --bar-bottom-role-neutral-border: rgba(142, 142, 142, 0.15);
+      --bar-bottom-role-neutral-native: var(--inpost-grey-900);
+
+      /* ── Bar Bottom Tab component tokens ── */
+      --bar-bottom-tab-role-neutral-bg:       rgba(255, 255, 255, 0);
+      --bar-bottom-tab-role-neutral-label:    var(--inpost-grey-900);
+      --bar-bottom-tab-size-medium-gap:       var(--spacing-4);
+      --bar-bottom-tab-size-medium-padding-h: var(--spacing-0);
+      --bar-bottom-tab-size-medium-padding-v: var(--spacing-8);
+
+      /* ── Bar Bottom Button (CTA) component tokens ── */
+      --bar-bottom-button-role-neutral-bg:     var(--inpost-grey-900);
+      --bar-bottom-button-role-neutral-border: rgba(142, 142, 142, 0.15);
+      --bar-bottom-button-role-neutral-icon:   var(--inpost-yellow-600);
+      --bar-bottom-button-size-medium-radius:  var(--radius-md);
+    }
+
+    /* ─────────────────────────────────────────────
+       Reset & Base
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #C8C8C8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 32px 0;
+      font-family: var(--font-family-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─────────────────────────────────────────────
+       Screen shell (360 × 780 px — iPhone 16/16+)
+    ───────────────────────────────────────────── */
+    .screen {
+      position: relative;
+      width: 360px;
+      height: 780px;
+      background: var(--general-background);
+      overflow: hidden;
+      border-radius: 44px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+    }
+
+    /* ─────────────────────────────────────────────
+       Top Bar  (position: absolute, z=10)
+    ───────────────────────────────────────────── */
+    .bar-top {
+      position: absolute;
+      inset: 0 0 auto 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      background: var(--bar-top-role-neutral-bg);
+      border-bottom: 1px solid var(--bar-top-role-neutral-border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      overflow: hidden;
+    }
+
+    /* iOS status bar row */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      height: 44px;
+    }
+
+    .status-bar__time {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 22px;
+      color: var(--bar-top-role-neutral-native);
+      letter-spacing: -0.3px;
+    }
+
+    .status-bar__icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Top bar content row */
+    .top-bar-content {
+      display: flex;
+      align-items: center;
+      gap: var(--bar-top-size-medium-gap);
+      padding:
+        0
+        var(--bar-top-size-medium-padding-h)
+        var(--bar-top-size-medium-padding-v);
+    }
+
+    .top-bar-welcome {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* InPost signet 32×32 */
+    .inpost-signet {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      overflow: hidden;
+    }
+
+    .hello-label {
+      font-family: var(--font-family-primary);
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-1);
+      line-height: var(--font-size-1_5);
+      color: var(--bar-top-role-neutral-label);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-bar-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* InCoins display */
+    .incoins {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 48px;
+    }
+
+    .incoins__amount {
+      font-family: var(--font-family-secondary);
+      font-size: var(--font-size-1);
+      font-weight: 400;
+      line-height: var(--font-size-1);
+      letter-spacing: -0.32px;
+      color: var(--on-primary);
+      white-space: nowrap;
+    }
+
+    .incoins__icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Basket button */
+    .basket-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--bar-top-button-role-neutral-bg);
+      border: none;
+      border-radius: var(--bar-top-button-size-medium-radius);
+      cursor: pointer;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    /* ─────────────────────────────────────────────
+       Scrollable content area
+    ───────────────────────────────────────────── */
+    .scrollable {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      padding-top: 120px;   /* clear top bar */
+      padding-bottom: 130px; /* clear bottom bar */
+      /* hide scrollbar */
+      scrollbar-width: none;
+    }
+    .scrollable::-webkit-scrollbar { display: none; }
+
+    /* ─────────────────────────────────────────────
+       Bento 2-column grid
+    ───────────────────────────────────────────── */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: var(--spacing-8) var(--spacing-20);
+    }
+
+    /* ─────────────────────────────────────────────
+       Home Card
+    ───────────────────────────────────────────── */
+    .home-card {
+      background: var(--home-card-role-neutral-bg);
+      border-radius: var(--home-card-size-medium-radius);
+      min-height: 172px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding:
+        var(--home-card-size-medium-padding-v)
+        var(--home-card-size-medium-padding-h);
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+    .home-card:active { opacity: 0.75; }
+
+    .card-inner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--home-card-size-medium-gap);
+      align-items: flex-end;
+      width: 100%;
+    }
+
+    .card-icon-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      gap: 8px;
+      height: 68px;
+      width: 100%;
+    }
+
+    .card-counter {
+      font-family: var(--font-family-secondary);
+      font-size: 28px;
+      font-weight: var(--font-weight-black);
+      line-height: 28px;
+      color: var(--home-card-role-neutral-label);
+      padding: 4px 0;
+      align-self: center;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      color: var(--home-card-role-neutral-label);
+    }
+
+    .card-label {
+      font-family: var(--font-family-primary);
+      font-weight: var(--font-weight-semi-bold);
+      font-size: var(--font-size-0_875);
+      line-height: var(--font-size-1_25);
+      color: var(--home-card-role-neutral-label);
+      text-align: right;
+      width: 100%;
+      min-height: 40px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    /* ─────────────────────────────────────────────
+       Bottom Bar
+    ───────────────────────────────────────────── */
+    .bar-bottom-wrapper {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      background: var(--bar-bottom-role-neutral-bg);
+      border-top: 1px solid var(--bar-bottom-role-neutral-border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .bar-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      height: 80px;
+      padding: 0 8px 4px;
+      border-top: 1px solid var(--bar-bottom-role-neutral-border);
+    }
+
+    /* ── Nav Tab (regular) ── */
+    .nav-tab {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--bar-bottom-tab-size-medium-gap);
+      padding:
+        var(--bar-bottom-tab-size-medium-padding-v)
+        var(--bar-bottom-tab-size-medium-padding-h);
+      background: var(--bar-bottom-tab-role-neutral-bg);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .nav-tab__icon {
+      width: 24px;
+      height: 24px;
+      color: var(--bar-bottom-tab-role-neutral-label);
+      flex-shrink: 0;
+    }
+
+    .nav-tab__label {
+      font-family: var(--font-family-primary);
+      font-weight: var(--font-weight-medium);
+      font-size: var(--font-size-0_75);
+      line-height: var(--font-size-1);
+      color: var(--bar-bottom-tab-role-neutral-label);
+      text-align: center;
+      letter-spacing: 0.06px;
+      white-space: nowrap;
+    }
+
+    /* ── CTA Tab (Kupuj, centre) ── */
+    .nav-cta {
+      flex-shrink: 0;
+      width: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--bar-bottom-tab-size-medium-gap);
+      padding-bottom: var(--spacing-8);
+    }
+
+    .cta-button {
+      width: 64px;
+      height: 64px;
+      background: var(--bar-bottom-button-role-neutral-bg);
+      border: 1px solid var(--bar-bottom-button-role-neutral-border);
+      border-radius: var(--bar-bottom-button-size-medium-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0;
+    }
+
+    .cta-button__icon {
+      width: 56px;
+      height: 56px;
+      color: var(--bar-bottom-button-role-neutral-icon);
+    }
+
+    /* ── iOS Home Indicator ── */
+    .home-indicator {
+      height: 34px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+
+    .home-indicator__bar {
+      width: 144px;
+      height: 5px;
+      background: var(--bar-bottom-role-neutral-native);
+      border-radius: 100px;
+    }
+  </style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- ══════════════════════════════════
+       TOP BAR
+  ═══════════════════════════════════ -->
+  <header class="bar-top">
+
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+      <span class="status-bar__time">9:41</span>
+      <div class="status-bar__icons">
+        <!-- Cellular signal -->
+        <svg width="19" height="13" viewBox="0 0 19 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="0"  y="7"  width="3" height="6" rx="1" fill="#1D1D1D"/>
+          <rect x="4"  y="5"  width="3" height="8" rx="1" fill="#1D1D1D"/>
+          <rect x="8"  y="3"  width="3" height="10" rx="1" fill="#1D1D1D"/>
+          <rect x="12" y="1"  width="3" height="12" rx="1" fill="#1D1D1D"/>
+          <rect x="16" y="0"  width="3" height="13" rx="1" fill="#1D1D1D"/>
+        </svg>
+        <!-- Wi-Fi -->
+        <svg width="17" height="13" viewBox="0 0 17 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="8.5" cy="11.5" r="1.5" fill="#1D1D1D"/>
+          <path d="M4.87 7.87A5.25 5.25 0 0 1 8.5 6.5a5.25 5.25 0 0 1 3.63 1.37l1.42-1.42A7.25 7.25 0 0 0 8.5 4.5a7.25 7.25 0 0 0-5.05 1.95L4.87 7.87Z" fill="#1D1D1D"/>
+          <path d="M1.11 4.11A10.25 10.25 0 0 1 8.5 1a10.25 10.25 0 0 1 7.39 3.11L17 2.5A12.25 12.25 0 0 0 8.5 0 12.25 12.25 0 0 0 0 2.5l1.11 1.61Z" fill="#1D1D1D"/>
+        </svg>
+        <!-- Battery -->
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#1D1D1D" stroke-opacity="0.35"/>
+          <rect x="2" y="2" width="18" height="9" rx="2" fill="#1D1D1D"/>
+          <path d="M24 4.5v4c.83-.34 1.5-1.32 1.5-2s-.67-1.66-1.5-2Z" fill="#1D1D1D" fill-opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Main top-bar row -->
+    <div class="top-bar-content">
+
+      <!-- Welcome area: logo + greeting -->
+      <div class="top-bar-welcome">
+        <!-- InPost Signet 32×32
+             Simplified geometric signet – yellow square with InPost mark rays
+             Source: Aura DS InPostSignetSquare / InPost brand signet
+        -->
+        <div class="inpost-signet" aria-label="InPost">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Yellow background -->
+            <rect width="32" height="32" rx="3" fill="#FFCC05"/>
+            <!-- InPost signet geometric mark (simplified rays / arrows) -->
+            <!-- Horizontal bar -->
+            <rect x="5" y="15" width="10" height="3" fill="#1D1D1D"/>
+            <!-- Left vertical bar -->
+            <rect x="5" y="5" width="3" height="22" fill="#1D1D1D"/>
+            <!-- Right arrow-head -->
+            <path d="M15 8h3v3h3v3h3v3h-3v3h-3v3h-3V8Z" fill="#1D1D1D" fill-rule="evenodd" clip-rule="evenodd"/>
+            <!-- Simplify arrow: just diagonal blocks -->
+            <rect x="15" y="5"  width="3" height="3" fill="#1D1D1D"/>
+            <rect x="18" y="8"  width="3" height="3" fill="#1D1D1D"/>
+            <rect x="21" y="11" width="3" height="10" fill="#1D1D1D"/>
+            <rect x="18" y="21" width="3" height="3" fill="#1D1D1D"/>
+            <rect x="15" y="24" width="3" height="3" fill="#1D1D1D"/>
+          </svg>
+        </div>
+        <span class="hello-label">Cześć, Agnieszka</span>
+      </div>
+
+      <!-- Buttons: InCoins + Basket -->
+      <div class="top-bar-buttons">
+
+        <!-- InCoins -->
+        <div class="incoins" role="text" aria-label="12 670 InCoins">
+          <span class="incoins__amount">12 670</span>
+          <!-- ic/in-coin-20dp from Aura DS Neo4j -->
+          <div class="incoins__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15.3846 3.07692H16.9231V4.61538H18.4615V15.3846H16.9231V16.9231H15.3846V18.4615H4.61538V16.9231H3.07691V15.3846H1.53845V4.61538H3.07691V3.07692H4.61538V1.53846H15.3846V3.07692Z" fill="#FFCC05"/>
+              <path d="M3.07491 15.3846H1.53845L1.53845 4.61538L3.07591 4.61538L3.07591 3.07692L4.61437 3.07692V4.61538L3.07691 4.61538L3.07691 15.3846H4.61337L4.61337 16.9231H3.07491L3.07491 15.3846Z" fill="#EFB503"/>
+              <path d="M4.61538 16.9231L15.3846 16.9231V18.4615L4.61538 18.4615V16.9231Z" fill="#EFB503"/>
+              <path d="M16.923 15.3846V16.9231H15.3846V15.3846H16.923Z" fill="#FFF287"/>
+              <path d="M18.4615 15.3846H16.923V4.61538H18.4615V15.3846Z" fill="#FFF287"/>
+              <path d="M16.923 4.61538H15.3846V3.07742H16.923V4.61538Z" fill="#FFF287"/>
+              <path d="M15.3846 3.07742L4.61536 3.07692V1.53846H15.3846V3.07742Z" fill="#FFF287"/>
+              <path d="M11.2932 15.3847H10.2677V16.4103H9.24167V15.3842H10.2672V14.3586H11.2932V15.3847Z" fill="#1D1D1D"/>
+              <path d="M8.20584 13.3336H7.18033V14.3591H6.15428V13.333H7.17979V12.3075H8.20584V13.3336Z" fill="#1D1D1D"/>
+              <path d="M13.3334 7.17969H11.2824V8.20525H10.2568V9.23026H11.2818V10.2564H10.2563V11.2819H11.2818V12.3075H13.3328V13.3336H10.2666V12.308H9.23026V11.2819H8.20475L8.20529 8.20471H9.2308V7.17915H10.2672V6.15359H13.3334V7.17969Z" fill="#1D1D1D"/>
+              <path d="M7.18033 10.2569H5.12823V9.23077H7.18033V10.2569Z" fill="#1D1D1D"/>
+              <path d="M7.18033 6.15359H8.20584V7.17969H7.17979V6.15468H6.15428V5.12858H7.18033V6.15359Z" fill="#1D1D1D"/>
+              <path d="M10.2568 4.10248H11.2824V5.12858H10.2563V4.10302H9.2308V3.07692H10.2568V4.10248Z" fill="#1D1D1D"/>
+              <path d="M15.3846 20H4.61539V18.4615H15.3846V20Z" fill="#1D1D1D"/>
+              <path d="M4.61539 18.4615H3.07742V16.9231H4.61539V18.4615Z" fill="#1D1D1D"/>
+              <path d="M16.9231 18.4615H15.3846V16.9231H16.9231V18.4615Z" fill="#1D1D1D"/>
+              <path d="M3.07742 16.9231H1.53846V15.3846H3.07692L3.07742 16.9231Z" fill="#1D1D1D"/>
+              <path d="M18.4615 16.9231H16.9231V15.3846H18.4615V16.9231Z" fill="#1D1D1D"/>
+              <path d="M1.53846 15.3846H0V4.61539H1.53846V15.3846Z" fill="#1D1D1D"/>
+              <path d="M20 15.3846H18.4615V4.61539H20V15.3846Z" fill="#1D1D1D"/>
+              <path d="M3.07692 4.61539H1.53846V3.07692H3.07692V4.61539Z" fill="#1D1D1D"/>
+              <path d="M18.4615 4.61539H16.9231V3.07692H18.4615V4.61539Z" fill="#1D1D1D"/>
+              <path d="M4.61539 3.07692H3.07692L3.07742 1.53846H4.61539V3.07692Z" fill="#1D1D1D"/>
+              <path d="M16.9231 3.07692H15.3846V1.53846H16.9231V3.07692Z" fill="#1D1D1D"/>
+              <path d="M15.3846 1.53846H4.61539V0H15.3846V1.53846Z" fill="#1D1D1D"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Basket button — ic/in-basket from Aura DS Neo4j -->
+        <button class="basket-btn" aria-label="Koszyk">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M16.5914 9.04596H7.40861L10.8222 4.13406L9.17786 3L4.97609 9.04596H2V11.0383H3.09505L4.09505 21H19.905L20.905 11.0383H22V9.04596H19.0239L14.8221 3L13.1778 4.13406L16.5914 9.04596ZM18.8951 11.0383H5.10503L5.90503 19.0077H18.0951L18.8951 11.0383Z" fill="#1D1D1D"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════
+       SCROLLABLE CONTENT
+  ═══════════════════════════════════ -->
+  <main class="scrollable">
+    <div class="bento-grid">
+
+      <!-- ── Card 1: Nie masz paczek ── -->
+      <!-- ic/home/in-parcel from Aura DS Neo4j -->
+      <div class="home-card" role="button" tabindex="0" aria-label="Nie masz paczek – 0 paczek">
+        <div class="card-inner">
+          <div class="card-icon-row">
+            <span class="card-counter">0</span>
+            <svg class="card-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M64 56.3721L55.7852 64H0V10L11.2324 0H64V56.3721ZM6.09961 10H54V60L60 54.627V4H12.7676L6.09961 10ZM4 60H50V14H4V60Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="card-label">Nie masz paczek</span>
+        </div>
+      </div>
+
+      <!-- ── Card 2: Okazje ── -->
+      <!-- ic/home/in-promo from Aura DS Neo4j -->
+      <div class="home-card" role="button" tabindex="0" aria-label="Okazje">
+        <div class="card-inner">
+          <div class="card-icon-row">
+            <svg class="card-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M31.9648 1.32914C35.5016 -0.459215 39.8375 -0.459408 43.4043 1.42875C47.4007 3.54686 49.6895 7.62341 49.6895 12.6289H45.6924C45.6924 9.10209 44.2137 6.38459 41.5361 4.96586C39.7477 4.01673 37.6096 3.79676 35.6514 4.23636C37.3798 6.30452 38.4893 9.10209 38.4893 12.6289V14.5166H49.709V59.6573H49.9189L56.0537 54.0323V14.4873H60.0498V55.7803L51.4775 63.6436H4.0498V14.5069H14.2705V12.6192C14.2705 4.33657 20.3653 0 26.3799 0C28.3082 0 30.2364 0.449926 31.9648 1.32914ZM8.0459 18.5137V59.6573H45.7227V18.5137H38.499V22.9698H34.5029V18.5137H18.2676V22.9698H14.2705V18.5137H8.0459ZM26.3799 3.99613C22.3435 3.99613 18.2676 6.66449 18.2676 12.6192V14.5069H34.5029V12.6192C34.5029 9.91159 33.6231 7.65292 31.9746 6.11429C30.506 4.74569 28.5178 3.99613 26.3799 3.99613Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="card-label">Okazje</span>
+        </div>
+      </div>
+
+      <!-- ── Card 3: Nadaj lub zwróć ── -->
+      <!-- ic/home/in-parcel-send from Aura DS Neo4j -->
+      <div class="home-card" role="button" tabindex="0" aria-label="Nadaj lub zwróć">
+        <div class="card-inner">
+          <div class="card-icon-row">
+            <svg class="card-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M37 4H12.7676L6.09961 10H37V14H4V60H50V27H54V60L60 54.627V27H64V56.3721L55.7852 64H0V10L11.2324 0H37V4Z" fill="currentColor"/>
+              <path d="M64 17H60V7.03613L46.4141 20.623L43.585 17.7939L57.3799 4H47V0H64V17Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="card-label">Nadaj lub zwróć</span>
+        </div>
+      </div>
+
+      <!-- ── Card 4: Mój InPost ── -->
+      <!-- ic/home/in-myinpost from Aura DS Neo4j -->
+      <div class="home-card" role="button" tabindex="0" aria-label="Mój InPost">
+        <div class="card-inner">
+          <div class="card-icon-row">
+            <svg class="card-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M45.9297 38.9385V60H18V38.9385H45.9297ZM21.5 42.4385V56.5H42.4297V42.4385H33.7149V45.9385H30.2149V42.4385H21.5ZM43.7217 29.1592C47.9567 29.1592 51.2392 30.4066 53.4736 32.8662C56.6775 36.3907 56.47 41.162 56.418 41.9248V54.2666L56.4092 54.2578H52.9453V41.6826C52.9453 41.6826 53.2741 37.7768 50.8838 35.1699C49.3336 33.4811 46.926 32.6231 43.7217 32.623H40.8721V29.1592H43.7217ZM23.5342 32.6152H20.7188C17.5145 32.6153 15.0982 33.4724 13.5567 35.1611C11.1668 37.7674 11.4862 41.6376 11.4863 41.6826V54.2578H8.02247V41.916C7.97046 41.1524 7.76318 36.3902 10.9668 32.8574C13.2012 30.3979 16.4752 29.1505 20.7188 29.1504H23.5342V32.6152ZM32.211 4C38.8362 4 44.241 9.39539 44.2412 16.0293C44.2412 22.6634 38.845 28.0596 32.211 28.0596V28.0508C25.5772 28.0506 20.1819 22.6552 20.1817 16.0215C20.1817 9.38754 25.5857 4.00022 32.211 4ZM32.211 7.46387C27.4912 7.46409 23.6457 11.3095 23.6455 16.0293C23.6455 20.7492 27.4911 24.5945 32.211 24.5947C36.931 24.5947 40.7764 20.7494 40.7764 16.0293C40.7762 11.3094 36.9309 7.46387 32.211 7.46387Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="card-label">Mój InPost</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════
+       BOTTOM BAR
+  ═══════════════════════════════════ -->
+  <nav class="bar-bottom-wrapper" aria-label="Nawigacja główna">
+    <div class="bar-bottom">
+
+      <!-- Tab 1: InPost (active) — ic/in-home-fill from Aura DS Neo4j -->
+      <div class="nav-tab" role="tab" aria-selected="true" aria-label="InPost">
+        <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M11.3857 2.47749C11.7468 2.19663 12.2532 2.19663 12.6143 2.47749L20.6143 8.70015C20.8576 8.88961 21 9.18079 21 9.48921V21H13V15H11V21H3V8.99995C4.99992 7.50001 10.183 3.41297 11.3857 2.47749Z" fill="currentColor"/>
+        </svg>
+        <span class="nav-tab__label">InPost</span>
+      </div>
+
+      <!-- Tab 2: Przesyłki — ic/in-track from Aura DS Neo4j -->
+      <div class="nav-tab" role="tab" aria-selected="false" aria-label="Przesyłki">
+        <svg class="nav-tab__icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M54.4395 21.9492L64 29.5342V49.5H53.8496C53.1547 52.9233 50.1284 55.5 46.5 55.5C42.8716 55.5 39.8453 52.9233 39.1504 49.5H21.8496C21.1547 52.9233 18.1284 55.5 14.5 55.5C10.3579 55.5 7 52.1421 7 48C7 43.8579 10.3579 40.5 14.5 40.5C17.7653 40.5 20.5415 42.5873 21.5713 45.5H39.4287C40.4585 42.5873 43.2347 40.5 46.5 40.5C49.7653 40.5 52.5415 42.5873 53.5713 45.5H60V31.4658L51.6182 24.8164L51.2822 24.5508L44.7832 12H0V8H47.2168L54.4395 21.9492ZM14.5 44.5C12.567 44.5 11 46.067 11 48C11 49.933 12.567 51.5 14.5 51.5C16.433 51.5 18 49.933 18 48C18 46.067 16.433 44.5 14.5 44.5ZM46.5 44.5C44.567 44.5 43 46.067 43 48C43 49.933 44.567 51.5 46.5 51.5C48.433 51.5 50 49.933 50 48C50 46.067 48.433 44.5 46.5 44.5Z" fill="currentColor"/>
+          <path d="M12.5 36H0V32H12.5V36Z" fill="currentColor"/>
+          <path d="M19.5 24H0V20H19.5V24Z" fill="currentColor"/>
+        </svg>
+        <span class="nav-tab__label">Przesyłki</span>
+      </div>
+
+      <!-- Tab 3: Kupuj (CTA) — dark button with InPost yellow -->
+      <div class="nav-cta" role="tab" aria-selected="false" aria-label="Kupuj">
+        <button class="cta-button" aria-label="Kupuj">
+          <!-- Von Menu / InPost mascot: stylised "K" shopping bag in yellow
+               (InPost dog mascot asset not in Neo4j; using ic/in-bag variant) -->
+          <svg class="cta-button__icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Simplified InPost-style bag / mascot placeholder in brand yellow -->
+            <g transform="translate(4 4)">
+              <!-- Head -->
+              <ellipse cx="24" cy="14" rx="12" ry="10" fill="currentColor"/>
+              <!-- Ears -->
+              <ellipse cx="14" cy="8"  rx="4" ry="5" fill="currentColor"/>
+              <ellipse cx="34" cy="8"  rx="4" ry="5" fill="currentColor"/>
+              <!-- Body -->
+              <rect x="10" y="22" width="28" height="20" rx="4" fill="currentColor"/>
+              <!-- Eyes -->
+              <circle cx="19" cy="13" r="2.5" fill="#1D1D1D"/>
+              <circle cx="29" cy="13" r="2.5" fill="#1D1D1D"/>
+              <!-- Nose -->
+              <ellipse cx="24" cy="18" rx="3" ry="2" fill="#1D1D1D"/>
+              <!-- Collar -->
+              <rect x="12" y="22" width="24" height="4" rx="2" fill="#1D1D1D"/>
+              <!-- Paws -->
+              <ellipse cx="13" cy="44" rx="5" ry="3.5" fill="currentColor"/>
+              <ellipse cx="35" cy="44" rx="5" ry="3.5" fill="currentColor"/>
+            </g>
+          </svg>
+        </button>
+        <span class="nav-tab__label">Kupuj</span>
+      </div>
+
+      <!-- Tab 4: Nagrody — ic/in-trophy from Aura DS Neo4j -->
+      <div class="nav-tab" role="tab" aria-selected="false" aria-label="Nagrody">
+        <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M19 3.00293V9.00293C19 11 17.9961 16 12.9961 16.9414V19.0029H17.9961V21.0029H6.00391V19.0029H11.0039V16.9414C6.00391 16 5 11 5 9.00293V3.00293H19ZM7 5.00293V9.00293C7 12 8.99826 14.9993 12 15.002C15.0017 14.9993 17 11.9987 17 9.00293V5.00293H7Z" fill="currentColor"/>
+          <path d="M3 9.00293H1V3H3V9.00293Z" fill="currentColor"/>
+          <path d="M23 3V9.00293H21V3H23Z" fill="currentColor"/>
+        </svg>
+        <span class="nav-tab__label">Nagrody</span>
+      </div>
+
+      <!-- Tab 5: Więcej — ic/in-dots-square-horizontal from Aura DS Neo4j -->
+      <div class="nav-tab" role="tab" aria-selected="false" aria-label="Więcej">
+        <svg class="nav-tab__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M7 13L4 13.0001V10.0001L7 10V13Z" fill="currentColor"/>
+          <path d="M13.5 13.0001H10.5V10.0001H13.5V13.0001Z" fill="currentColor"/>
+          <path d="M20 13H17V10H20V13Z" fill="currentColor"/>
+        </svg>
+        <span class="nav-tab__label">Więcej</span>
+      </div>
+
+    </div>
+
+    <!-- iOS Home Indicator -->
+    <div class="home-indicator" aria-hidden="true">
+      <div class="home-indicator__bar"></div>
+    </div>
+  </nav>
+
+</div>
+</body>
+</html>
